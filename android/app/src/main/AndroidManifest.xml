@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.url_shortener_app">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="url_shortener_app"
         android:icon="@mipmap/ic_launcher">
