@@ -39,8 +39,8 @@ class _LandingState extends State<Landing> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return CircularProgressIndicator();
-    else if (_signedin) return MyHomePage();
-    else return LoginPage();
+    if (_isLoading) return Center(child: CircularProgressIndicator());
+    else if (_signedin) return MyHomePage(storage: _storage);
+    else return LoginPage(storage: _storage);
   }
 }

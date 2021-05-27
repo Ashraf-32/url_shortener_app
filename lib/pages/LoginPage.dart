@@ -1,24 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+// import 'package:url_shortener_app/services/SecureStorage.dart';
+import 'package:url_shortener_app/pages/MyHomePage.dart';
+import 'package:url_shortener_app/pages/SignupPage.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key key}) : super(key: key);
+  // const LoginPage({Key key}) : super(key: key);
+
+  final storage;
+  LoginPage({this.storage});
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  var _loginUrl = Uri.parse("https://ashortl.herokuapp.com/api/login/");
+  Map _response = Map();
+  bool _isloading = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+
   void login() async {
-    
+    if (nameController.text != "" && passwordController.text != "") {
+      setState(() {
+        _isloading = true;
+      });
+      var response = await http.post(_loginUrl,
+        body: '{"username": "${nameController.text}", "password": "${passwordController.text}"}',
+        headers: {"Content-Type": 'application/json'}
+      );
+      _response = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        await widget.storage.writeSecureData("token", _response['token']);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage(storage: widget.storage)));
+
+      } else {
+        setState(() {
+          _isloading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            '${_response['non_field_errors']}',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Colors.blueGrey,
+          duration: Duration(milliseconds: 1500),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            'Fill in the blank fields',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Colors.blueGrey,
+          duration: Duration(milliseconds: 1500),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return _isloading ? Center(child: CircularProgressIndicator()) : SafeArea(
           child: Scaffold(
           // appBar: AppBar(
           //   title: Text('Sample App'),
@@ -87,8 +136,10 @@ class _LoginPageState extends State<LoginPage> {
                             'Signup',
                             style: TextStyle(fontSize: 15),
                           ),
+                          splashColor: Colors.grey,
                           onPressed: () {
                             //signup screen
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignupPage(storage: widget.storage)));
                           },
                         )
                       ],
