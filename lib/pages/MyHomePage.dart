@@ -42,10 +42,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
           _visible = true;
         });
-      } else {
+      } else if (_response == null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           'An error occured!',
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: Colors.blueGrey,
+        duration: Duration(milliseconds: 1500),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))));
+      } else {
+        var message;
+        _response.forEach((key, value) { message = value; });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          '$message',
           textAlign: TextAlign.center,
         ),
         backgroundColor: Colors.blueGrey,

@@ -43,9 +43,11 @@ class _SignupPageState extends State<SignupPage> {
           setState(() {
             _isloading = false;
           });
+          var message;
+          _response.forEach((key, value) { message = value; });
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
-            '${_response['details']}',
+            '$message',
             textAlign: TextAlign.center,
           ),
           backgroundColor: Colors.blueGrey,

@@ -42,9 +42,11 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           _isloading = false;
         });
+        var message;
+        _response.forEach((key, value) { message = value; });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
-            '${_response['non_field_errors']}',
+            '$message',
             textAlign: TextAlign.center,
           ),
           backgroundColor: Colors.blueGrey,
